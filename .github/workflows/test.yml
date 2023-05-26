@@ -1,0 +1,29 @@
+
+name: 'STDIO Check'
+
+# **What it does**:
+# **Why we have it**:
+# **Who does it impact**:
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  check-links:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: STDIO check
+        run: |
+          echo PS1=$PS1
+          if [ -t 0 ] ; then echo "stdout terminal"; else echo "stdout not a terminal"; fi
+          if [ -t 1 ] ; then echo "stdout terminal"; else echo "stdout not a terminal"; fi
+          if [ -t 2 ] ; then echo "stderr terminal"; else echo "stderr not a terminal"; fi
