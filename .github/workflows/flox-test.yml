@@ -45,6 +45,4 @@ jobs:
 
           flox init -t package-simple -n hello;
 
-          sed -i 's/^}/buildCommand = "touch \"$out\";"; }' ./pkgs/*/default.nix;
-
           flox build
