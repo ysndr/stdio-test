@@ -1,0 +1,50 @@
+name: "flox STDIO Check"
+
+# **What it does**:
+# **Why we have it**:
+# **Who does it impact**:
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: "${{ github.workflow }}"
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install flox
+        uses: flox/install-flox-action@v1.0.0
+
+      - name: STDIO check
+        run: |
+          echo PS1=$PS1
+          if [ -t 0 ] ; then echo "stdin terminal"; else echo "stdin not a terminal"; fi
+          if [ -t 1 ] ; then echo "stdout terminal"; else echo "stdout not a terminal"; fi
+          if [ -t 2 ] ; then echo "stderr terminal"; else echo "stderr not a terminal"; fi
+
+      - name: Build
+        run: |
+          mkdir -p ./prompt;
+
+          cd ./prompt;
+
+          flox init -i -n prompt -t project;
+
+          flox init -t package-simple -n prompt;
+
+          flox init -t package-simple -n hello;
+
+          sed -i 's/^}/buildCommand = "touch \"$out\";"; }' ./pkgs/*/default.nix;
+
+          flox build
