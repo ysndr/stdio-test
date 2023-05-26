@@ -20,9 +20,6 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
       - name: Install flox
         uses: flox/install-flox-action@v1.0.0
 
@@ -44,5 +41,7 @@ jobs:
           flox init -t package-simple -n prompt;
 
           flox init -t package-simple -n hello;
+
+          ls -R
 
           flox build
